@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>API Documentation — MediaAPI</title>
+<link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+<div class="glow-bg"></div>
+<nav>
+  <div class="nav-logo">⚡ MediaAPI</div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <a href="/docs" class="nav-link" style="color:var(--cyan);">Docs</a>
+    <a href="/#get-key" class="nav-cta">Get API Key</a>
+  </div>
+</nav>
+
+<div style="display:flex;max-width:1200px;margin:0 auto;padding:100px 24px 60px;gap:40px;">
+
+  <!-- Sidebar TOC -->
+  <div style="width:220px;flex-shrink:0;position:sticky;top:90px;height:fit-content;display:flex;flex-direction:column;gap:4px;">
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Endpoints</div>
+    <a href="#auth" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;">🔐 Authentication</a>
+    <a href="#info" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;">📋 /api/info</a>
+    <a href="#download" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;">⬇ /api/download</a>
+    <a href="#video" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;">🎬 /api/video</a>
+    <a href="#audio" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;">🎵 /api/audio</a>
+    <a href="#thumbnail" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;">🖼 /api/thumbnail</a>
+    <a href="#formats" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;">📊 /api/formats</a>
+    <a href="#playlist" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;">📂 /api/playlist</a>
+    <a href="#usage" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;">📈 /api/usage</a>
+    <a href="#tester" class="admin-nav-btn nav-link" style="padding:8px 14px;border-radius:8px;color:var(--cyan);">⚡ Live Tester</a>
+  </div>
+
+  <!-- Main Docs -->
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:40px;">
+    <div>
+      <h1 style="font-size:36px;font-weight:900;margin-bottom:10px;">API Reference</h1>
+      <p style="color:var(--muted);font-size:16px;">All endpoints support both <code class="mono" style="color:var(--cyan);">X-API-Key</code> header and <code class="mono" style="color:var(--cyan);">?api_key=</code> query param.</p>
+    </div>
+
+    <!-- Auth -->
+    <div id="auth" class="glass" style="padding:28px;border-radius:16px;">
+      <h2 style="font-size:20px;font-weight:800;margin-bottom:14px;">🔐 Authentication</h2>
+      <p style="color:var(--muted);margin-bottom:16px;">Add your API key to every request via header or query param:</p>
+      <div class="code-block" style="position:relative;">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <pre># Option A: Header (recommended)
+GET /api/info?url=...
+X-API-Key: mapi_your_key_here
+
+# Option B: Query param
+GET /api/info?url=...&api_key=mapi_your_key_here</pre>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="padding:10px 16px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;font-size:13px;"><strong style="color:var(--red);">401</strong> — Invalid/missing key</div>
+        <div style="padding:10px 16px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:13px;"><strong style="color:var(--amber);">429</strong> — Rate limit exceeded</div>
+      </div>
+    </div>
+
+    <!-- Endpoint template helper -->
+    <script>
+    function ep(id, method, path, desc, params, curlEx, respEx) {
+      const paramRows = params.map(p => `<tr><td class="mono" style="color:var(--cyan);font-size:12px;">${p[0]}</td><td style="font-size:12px;">${p[1]}</td><td style="font-size:12px;color:var(--muted);">${p[2]}</td><td>${p[3]}</td></tr>`).join('');
+      document.write(`
+      <div id="${id}" class="glass" style="padding:28px;border-radius:16px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+          <span style="padding:4px 12px;background:rgba(0,212,255,0.15);border-radius:6px;font-size:13px;font-weight:700;color:var(--cyan);">${method}</span>
+          <code class="mono" style="font-size:16px;">${path}</code>
+        </div>
+        <p style="color:var(--muted);margin-bottom:18px;">${desc}</p>
+        <table style="margin-bottom:18px;font-size:13px;">
+          <thead><tr><th>Param</th><th>Description</th><th>Default</th><th>Required</th></tr></thead>
+          <tbody>${paramRows}</tbody>
+        </table>
+        <div style="display:flex;gap:8px;margin-bottom:8px;"><button class="btn btn-xs btn-primary" onclick="toggleCode('curl-${id}',this)">curl</button><button class="btn btn-xs btn-ghost" onclick="toggleCode('py-${id}',this)">Python</button><button class="btn btn-xs btn-ghost" onclick="toggleCode('js-${id}',this)">JavaScript</button></div>
+        <div id="curl-${id}" class="code-block" style="position:relative;"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>${curlEx}</pre></div>
+        <div id="py-${id}" class="code-block hidden" style="position:relative;"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>import requests
+r = requests.get("https://your-api.onrender.com${path.split('?')[0]}", params={"url": "YOUR_URL"}, headers={"X-API-Key": "YOUR_KEY"})
+print(r.json())</pre></div>
+        <div id="js-${id}" class="code-block hidden" style="position:relative;"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>const res = await fetch('https://your-api.onrender.com${path.split('?')[0]}?url=YOUR_URL', { headers: { 'X-API-Key': 'YOUR_KEY' } });
+const data = await res.json();
+console.log(data);</pre></div>
+        <div style="margin-top:14px;font-size:12px;color:var(--muted);">Response preview:</div>
+        <div class="code-block" style="margin-top:6px;color:var(--green);font-size:12px;"><pre>${respEx}</pre></div>
+      </div>`);
+    }
+    function toggleCode(id, btn) {
+      const wrap = btn.closest('[id]');
+      wrap.querySelectorAll('.code-block').forEach(el => { if(el.id!==id) el.classList.add('hidden'); });
+      document.getElementById(id).classList.toggle('hidden');
+    }
+    </script>
+
+    <script>
+    ep('info','GET','/api/info','Get full metadata for any media URL.',
+      [['url','Media URL to extract info from','—','✅'],['api_key','API key (or use header)','—','✅ or header']],
+      `curl "https://your-api.onrender.com/api/info?url=https://youtu.be/dQw4w9WgXcQ" \\\n  -H "X-API-Key: mapi_your_key_here"`,
+      `{"success":true,"data":{"title":"Never Gonna Give You Up","duration":213,"view_count":1400000000,"channel":"Rick Astley","platform":"youtube","thumbnail":"https://...","formats":[...]}}`
+    );
+    ep('download','GET','/api/download?url=URL&type=video&quality=best','Universal download endpoint — auto-detects platform and type.',
+      [['url','Any supported URL','—','✅'],['type','video | audio | thumbnail','video','❌'],['quality','best | 1080p | 720p | 480p | 360p | 240p | 144p','best','❌'],['api_key','API key','—','✅ or header']],
+      `curl "https://your-api.onrender.com/api/download?url=https://youtu.be/dQw4w9WgXcQ&type=video&quality=720p" \\\n  -H "X-API-Key: mapi_your_key_here"`,
+      `{"success":true,"data":{"title":"...","direct_url":"https://cdn.platform.com/...","quality":"720p","ext":"mp4","note":"Direct CDN URL..."}}`
+    );
+    ep('video','GET','/api/video?url=URL&quality=best','Get direct video stream URL for any quality.',
+      [['url','Video URL','—','✅'],['quality','best | 1080p | 720p | 480p | 360p | 240p | 144p','best','❌'],['api_key','API key','—','✅ or header']],
+      `curl "https://your-api.onrender.com/api/video?url=https://www.tiktok.com/@user/video/123&quality=best" \\\n  -H "X-API-Key: mapi_your_key_here"`,
+      `{"success":true,"data":{"title":"TikTok Video","platform":"tiktok","direct_url":"https://...","ext":"mp4","quality":"best"}}`
+    );
+    ep('audio','GET','/api/audio?url=URL&format=mp3','Extract audio stream URL from any video.',
+      [['url','Video/audio URL','—','✅'],['format','mp3 | m4a | ogg | wav','mp3','❌'],['api_key','API key','—','✅ or header']],
+      `curl "https://your-api.onrender.com/api/audio?url=https://soundcloud.com/artist/track&format=mp3" \\\n  -H "X-API-Key: mapi_your_key_here"`,
+      `{"success":true,"data":{"title":"Track Name","platform":"soundcloud","direct_url":"https://...","requested_format":"mp3"}}`
+    );
+    ep('thumbnail','GET','/api/thumbnail?url=URL','Get all available thumbnail URLs in multiple resolutions.',
+      [['url','Media URL','—','✅'],['api_key','API key','—','✅ or header']],
+      `curl "https://your-api.onrender.com/api/thumbnail?url=https://www.instagram.com/reel/ABC123/" \\\n  -H "X-API-Key: mapi_your_key_here"`,
+      `{"success":true,"data":{"thumbnail":"https://...","thumbnails":[{"url":"https://...","width":1920,"height":1080}],"platform":"instagram"}}`
+    );
+    ep('formats','GET','/api/formats?url=URL','List all available video/audio formats with codec and filesize info.',
+      [['url','Media URL','—','✅'],['api_key','API key','—','✅ or header']],
+      `curl "https://your-api.onrender.com/api/formats?url=https://vimeo.com/123456789" \\\n  -H "X-API-Key: mapi_your_key_here"`,
+      `{"success":true,"data":{"total_formats":18,"video_formats":[{"format_id":"137","resolution":"1920x1080","ext":"mp4","fps":30}],"audio_formats":[...]}}`
+    );
+    ep('playlist','GET','/api/playlist?url=URL&max_items=20','Get items from a YouTube playlist or channel uploads.',
+      [['url','Playlist/Channel URL','—','✅'],['max_items','Items to return (1-50)','20','❌'],['api_key','API key','—','✅ or header']],
+      `curl "https://your-api.onrender.com/api/playlist?url=https://youtube.com/playlist?list=PLxxx&max_items=5" \\\n  -H "X-API-Key: mapi_your_key_here"`,
+      `{"success":true,"data":{"playlist_title":"My Playlist","total_items":42,"items":[{"title":"Video 1","url":"https://...","duration":300},...]}}`
+    );
+    ep('universal','GET','/api/universal?url=URL','Universal API: Returns metadata + best video & audio links in one call. Best for single-request extraction.',
+      [['url','Media URL','—','✅'],['api_key','API key','—','✅ or header']],
+      `curl "https://your-api.onrender.com/api/universal?url=https://youtu.be/dQw4w9WgXcQ" \\\n  -H "X-API-Key: mapi_your_key_here"`,
+      `{"success":true,"data":{"metadata":{...},"download":{"video":{...},"audio":{...}}}}`
+    );
+    ep('usage','GET','/api/usage','Check your API key usage and remaining quota.',
+      [['api_key','API key','—','✅ or header']],
+      `curl "https://your-api.onrender.com/api/usage" \\\n  -H "X-API-Key: mapi_your_key_here"`,
+      `{"success":true,"data":{"plan":"free","daily_used":12,"daily_limit":100,"remaining_today":88,"total_used":234}}`
+    );
+    </script>
+
+    <!-- Live Tester -->
+    <div id="tester" class="glass glass-glow" style="padding:32px;border-radius:16px;">
+      <h2 style="font-size:20px;font-weight:800;margin-bottom:20px;">⚡ Live API Tester</h2>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="form-group">
+          <label class="form-label">Your API Key</label>
+          <input id="t-key" class="form-input" type="text" placeholder="mapi_your_key_here"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Media URL</label>
+          <input id="t-url" class="form-input" type="text" placeholder="https://youtu.be/dQw4w9WgXcQ"/>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1;min-width:120px;">
+            <label class="form-label">Endpoint</label>
+            <select id="t-ep" class="form-select">
+              <option value="info">📋 /api/info</option>
+              <option value="download">⬇ /api/download</option>
+              <option value="video">🎬 /api/video</option>
+              <option value="audio">🎵 /api/audio</option>
+              <option value="thumbnail">🖼 /api/thumbnail</option>
+              <option value="formats">📊 /api/formats</option>
+              <option value="playlist">📂 /api/playlist</option>
+              <option value="usage">📈 /api/usage</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;min-width:120px;">
+            <label class="form-label">Quality</label>
+            <select id="t-quality" class="form-select">
+              <option value="best">Best</option>
+              <option value="1080p">1080p</option>
+              <option value="720p">720p</option>
+              <option value="480p">480p</option>
+              <option value="360p">360p</option>
+              <option value="240p">240p</option>
+              <option value="144p">144p</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="t-run-btn" onclick="runTest()" style="justify-content:center;">▶ Run Request</button>
+        <div style="font-size:13px;color:var(--muted);">Request URL:</div>
+        <div class="code-block" style="position:relative;">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre id="t-req-url" style="color:var(--muted);">Fill in the fields above to generate request URL</pre>
+        </div>
+        <div style="font-size:13px;color:var(--muted);">Response:</div>
+        <div class="code-block" style="max-height:400px;overflow-y:auto;">
+          <pre id="t-resp" style="color:var(--muted);">Response will appear here...</pre>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main docs -->
+</div><!-- /flex wrap -->
+
+<script>
+// Update request URL on input change
+['t-url','t-ep','t-key','t-quality'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateReqUrl);
+  document.getElementById(id).addEventListener('change', updateReqUrl);
+});
+
+function updateReqUrl() {
+  const url = document.getElementById('t-url').value.trim();
+  const ep = document.getElementById('t-ep').value;
+  const key = document.getElementById('t-key').value.trim();
+  const quality = document.getElementById('t-quality').value;
+  let req = `/api/${ep}`;
+  const params = [];
+  if (url) params.push(`url=${encodeURIComponent(url)}`);
+  if (['video','download'].includes(ep)) params.push(`quality=${quality}`);
+  if (key) params.push(`api_key=${key}`);
+  if (params.length) req += '?' + params.join('&');
+  document.getElementById('t-req-url').textContent = window.location.origin + req;
+}
+
+async function runTest() {
+  const url = document.getElementById('t-url').value.trim();
+  const ep = document.getElementById('t-ep').value;
+  const key = document.getElementById('t-key').value.trim();
+  const quality = document.getElementById('t-quality').value;
+  const resp = document.getElementById('t-resp');
+  const btn = document.getElementById('t-run-btn');
+  if (!key) { resp.textContent = 'Please enter your API key.'; resp.style.color='var(--red)'; return; }
+  btn.textContent = '⏳ Loading...'; btn.disabled = true;
+  resp.textContent = 'Waiting...'; resp.style.color = 'var(--muted)';
+  try {
+    let fetchUrl = `/api/${ep}`;
+    const params = new URLSearchParams();
+    if (url) params.append('url', url);
+    if (['video','download'].includes(ep)) params.append('quality', quality);
+    const qs = params.toString();
+    if (qs) fetchUrl += '?' + qs;
+    const r = await fetch(fetchUrl, { headers: { 'X-API-Key': key } });
+    const d = await r.json();
+    resp.textContent = JSON.stringify(d, null, 2);
+    resp.style.color = r.ok ? '#34d399' : '#f87171';
+  } catch(e) { resp.textContent = 'Error: ' + e.message; resp.style.color='var(--red)'; }
+  btn.textContent = '▶ Run Request'; btn.disabled = false;
+}
+
+function copyCode(btn) {
+  const pre = btn.nextElementSibling || btn.parentElement.querySelector('pre');
+  if (pre) navigator.clipboard.writeText(pre.textContent);
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy', 2000);
+}
+</script>
+</body>
+</html>

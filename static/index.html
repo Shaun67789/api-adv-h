@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MediaAPI — Universal Media Download API</title>
+<meta name="description" content="Download videos, audio, thumbnails from YouTube, Instagram, TikTok, Twitter and 1000+ platforms via simple API."/>
+<link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+
+<div class="glow-bg"></div>
+
+<!-- ─── NAVBAR ─────────────────────────── -->
+<nav>
+  <div class="nav-logo">⚡ MediaAPI</div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <a href="/docs" class="nav-link">Docs</a>
+    <a href="#library" class="nav-link">Library</a>
+    <a href="#get-key" class="nav-cta">Get API Key</a>
+  </div>
+</nav>
+
+<!-- ─── MAIN SITE ──────────────────────── -->
+<div id="main-site">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div style="position:relative;z-index:1;max-width:800px;">
+      <div class="hero-badge pulse">🔥 1000+ Platforms Supported</div>
+      <h1>Download Any Media.<br/>From Any Platform.</h1>
+      <p>A powerful, developer-first API for downloading videos, audio, thumbnails and metadata from YouTube, Instagram, TikTok, Twitter/X, Facebook and hundreds more platforms.</p>
+      <div class="hero-actions">
+        <a href="#get-key" class="btn btn-primary" style="font-size:16px;padding:14px 32px;">🚀 Get Free API Key</a>
+        <a href="/docs" class="btn btn-ghost" style="font-size:16px;padding:14px 32px;">📖 View Docs</a>
+      </div>
+      <div class="platforms">
+        <span class="platform-chip">▶ YouTube</span>
+        <span class="platform-chip">📸 Instagram</span>
+        <span class="platform-chip">🎵 TikTok</span>
+        <span class="platform-chip">🐦 Twitter/X</span>
+        <span class="platform-chip">📘 Facebook</span>
+        <span class="platform-chip">🎮 Twitch</span>
+        <span class="platform-chip">🎼 SoundCloud</span>
+        <span class="platform-chip">🎬 Vimeo</span>
+        <span class="platform-chip">💬 Reddit</span>
+        <span class="platform-chip">+ 1000 more</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Stats -->
+  <div class="stats-strip" id="stats-strip">
+    <div class="stat-item"><div class="num" id="stat-keys">—</div><div class="lbl">API Keys Issued</div></div>
+    <div class="stat-item"><div class="num" id="stat-req">—</div><div class="lbl">Total Requests</div></div>
+    <div class="stat-item"><div class="num" id="stat-today">—</div><div class="lbl">Requests Today</div></div>
+    <div class="stat-item"><div class="num text-cyan">1000+</div><div class="lbl">Platforms</div></div>
+  </div>
+
+  <!-- Features -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Everything You Need</h2>
+      <p>Built for developers who need reliable, fast media extraction at scale.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="glass feature-card fadein">
+        <div class="feature-icon">🎬</div>
+        <h3>Video Downloads</h3>
+        <p>Get direct CDN URLs for videos in any quality — 144p to 4K. No server storage needed.</p>
+      </div>
+      <div class="glass feature-card fadein">
+        <div class="feature-icon">🎵</div>
+        <h3>Audio Extraction</h3>
+        <p>Extract audio streams from any video in MP3, M4A, OGG or WAV format instantly.</p>
+      </div>
+      <div class="glass feature-card fadein">
+        <div class="feature-icon">🖼️</div>
+        <h3>Thumbnails</h3>
+        <p>Get all available thumbnail URLs in multiple resolutions — perfect for preview UIs.</p>
+      </div>
+      <div class="glass feature-card fadein">
+        <div class="feature-icon">📋</div>
+        <h3>Rich Metadata</h3>
+        <p>Fetch title, description, duration, views, likes, channel info and more in one call.</p>
+      </div>
+      <div class="glass feature-card fadein">
+        <div class="feature-icon">📂</div>
+        <h3>Playlist Support</h3>
+        <p>Enumerate entire YouTube playlists or channel uploads. Returns up to 50 items per call.</p>
+      </div>
+      <div class="glass feature-card fadein">
+        <div class="feature-icon">🍪</div>
+        <h3>Cookie Auth</h3>
+        <p>Upload your cookies.txt for age-restricted and member-only YouTube content downloads.</p>
+      </div>
+      <div class="glass feature-card fadein">
+        <div class="feature-icon">🔑</div>
+        <h3>API Key System</h3>
+        <p>Instant free key generation. Track your usage, manage limits and upgrade your plan.</p>
+      </div>
+      <div class="glass feature-card fadein">
+        <div class="feature-icon">⚡</div>
+        <h3>Lightning Fast</h3>
+        <p>Async FastAPI backend. Returns direct CDN URLs — no re-encoding or server downloads.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Example -->
+  <div class="section" style="padding-top:0;">
+    <div class="section-head">
+      <h2>Simple URL-Based API</h2>
+      <p>No complex SDK. Just a GET request with your API key.</p>
+    </div>
+    <div class="glass glass-glow" style="padding:32px;max-width:860px;margin:0 auto;">
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-primary" onclick="showEx('info')">Info</button>
+        <button class="btn btn-sm btn-ghost" onclick="showEx('video')">Video</button>
+        <button class="btn btn-sm btn-ghost" onclick="showEx('audio')">Audio</button>
+        <button class="btn btn-sm btn-ghost" onclick="showEx('thumb')">Thumbnail</button>
+        <button class="btn btn-sm btn-ghost" onclick="showEx('playlist')">Playlist</button>
+      </div>
+      <div class="code-block" style="position:relative;">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <pre id="ex-code">GET https://your-api.onrender.com/api/info?url=https://youtu.be/dQw4w9WgXcQ
+X-API-Key: mapi_your_key_here</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Get API Key -->
+  <div class="section" id="get-key" style="padding-top:0;">
+    <div class="section-head">
+      <h2>Get Your Free API Key</h2>
+      <p>100 requests/day free. No credit card required.</p>
+    </div>
+    <div class="key-form-wrap">
+      <div class="glass key-form">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input id="kf-name" class="form-input" type="text" placeholder="John Doe"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input id="kf-email" class="form-input" type="email" placeholder="john@example.com"/>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="createKey()">
+          ⚡ Generate Free API Key
+        </button>
+        <div id="kf-result" class="key-result">
+          <div style="color:var(--green);font-weight:700;margin-bottom:8px;">✅ Your API Key is Ready!</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">Save this key — it won't be shown again.</div>
+          <div class="key-display">
+            <code id="kf-key-val"></code>
+            <button class="btn btn-xs btn-ghost" onclick="copyKey()">Copy</button>
+          </div>
+          <div style="margin-top:14px;font-size:13px;color:var(--muted);">
+            Plan: <span class="badge badge-free">Free · 100 req/day</span><br/><br/>
+            Check your usage: <a href="/dashboard" style="color:var(--cyan);">Dashboard →</a>
+          </div>
+        </div>
+        <div id="kf-err" style="color:var(--red);font-size:13px;min-height:16px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Media Library / Database -->
+  <div class="section" id="library">
+    <div class="section-head">
+      <h2>🌐 Media Library</h2>
+      <p>The global database of recently processed media. Instant access to previously downloaded content.</p>
+    </div>
+    <div id="lib-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;">
+      <!-- Loaded via JS -->
+      <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);">Loading library...</div>
+    </div>
+    <div style="text-align:center;margin-top:40px;">
+      <button class="btn btn-ghost" onclick="loadLibrary()">🔄 Refresh Library</button>
+    </div>
+  </div>
+
+  <footer>
+    <div>⚡ <strong>MediaAPI</strong> — Universal Media Download API</div>
+    <div style="margin-top:8px;">Powered by yt-dlp · Built with FastAPI · <a href="/swagger" style="color:var(--cyan);">Swagger Docs</a></div>
+  </footer>
+
+</div><!-- /#main-site -->
+
+<!-- ══════════════════════════════════════
+     ADMIN PASSWORD OVERLAY
+══════════════════════════════════════════ -->
+<div id="admin-overlay" class="hidden">
+  <div class="admin-lock-card fadein">
+    <div class="lock-icon">🔐</div>
+    <h2>Admin Access</h2>
+    <p>Enter your admin password to continue</p>
+    <div class="form-group" style="text-align:left;">
+      <input id="admin-pass" class="form-input" type="password" placeholder="Enter password"
+             onkeydown="if(event.key==='Enter')verifyAdmin()"/>
+    </div>
+    <button class="btn btn-purple" style="width:100%;justify-content:center;margin-top:12px;" onclick="verifyAdmin()">
+      Unlock Admin Panel
+    </button>
+    <div class="admin-err" id="admin-err"></div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%;justify-content:center;" onclick="closeAdmin()">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADMIN PANEL
+══════════════════════════════════════════ -->
+<div id="admin-panel" class="hidden">
+  <div class="admin-header">
+    <div class="admin-logo">⚙️ MediaAPI Admin</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <span style="font-size:13px;color:var(--muted);">Logged in as <strong style="color:var(--purple);">Shaun</strong></span>
+      <button class="btn btn-ghost btn-sm" onclick="closeAdmin()">✕ Exit</button>
+    </div>
+  </div>
+  <div class="admin-body">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+      <button class="admin-nav-btn active" onclick="showTab('tab-overview',this)">📊 Overview</button>
+      <button class="admin-nav-btn" onclick="showTab('tab-keys',this)">🔑 API Keys</button>
+      <button class="admin-nav-btn" onclick="showTab('tab-create',this)">➕ Create Key</button>
+      <button class="admin-nav-btn" onclick="showTab('tab-logs',this)">📋 Request Logs</button>
+    </div>
+    <!-- Content -->
+    <div class="admin-content">
+
+      <!-- OVERVIEW TAB -->
+      <div id="tab-overview" class="admin-tab active">
+        <h2 style="margin-bottom:24px;">📊 Server Overview</h2>
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card glass"><div class="val text-cyan" id="a-total-keys">—</div><div class="key">Total Keys</div></div>
+          <div class="admin-stat-card glass"><div class="val text-green" id="a-active-keys">—</div><div class="key">Active Keys</div></div>
+          <div class="admin-stat-card glass"><div class="val text-purple" id="a-total-req">—</div><div class="key">Total Requests</div></div>
+          <div class="admin-stat-card glass"><div class="val text-amber" id="a-today-req">—</div><div class="key">Requests Today</div></div>
+          <div class="admin-stat-card glass"><div class="val text-green" id="a-success">—</div><div class="key">Successful</div></div>
+          <div class="admin-stat-card glass"><div class="val text-red" id="a-errors">—</div><div class="key">Errors</div></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadAdminStats()">🔄 Refresh Stats</button>
+      </div>
+
+      <!-- API KEYS TAB -->
+      <div id="tab-keys" class="admin-tab">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <h2>🔑 API Keys</h2>
+          <button class="btn btn-purple btn-sm" onclick="loadKeys()">🔄 Refresh</button>
+        </div>
+        <div class="tbl-wrap glass" style="padding:0;">
+          <table id="keys-table">
+            <thead>
+              <tr>
+                <th>Key</th><th>Name</th><th>Plan</th>
+                <th>Daily Used</th><th>Status</th><th>Created</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="keys-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px;">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CREATE KEY TAB -->
+      <div id="tab-create" class="admin-tab">
+        <h2 style="margin-bottom:24px;">➕ Create API Key</h2>
+        <div class="glass" style="max-width:480px;padding:32px;display:flex;flex-direction:column;gap:16px;">
+          <div class="form-group">
+            <label class="form-label">Name *</label>
+            <input id="ck-name" class="form-input" type="text" placeholder="User or app name"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input id="ck-email" class="form-input" type="email" placeholder="email@example.com"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Plan</label>
+            <select id="ck-plan" class="form-select">
+              <option value="free">Free (100 req/day)</option>
+              <option value="pro">Pro (1000 req/day)</option>
+              <option value="unlimited">Unlimited</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Custom Daily Limit (optional)</label>
+            <input id="ck-limit" class="form-input" type="number" placeholder="Leave blank for plan default"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Note (optional)</label>
+            <input id="ck-note" class="form-input" type="text" placeholder="Internal note..."/>
+          </div>
+          <button class="btn btn-purple" style="justify-content:center;" onclick="adminCreateKey()">Create API Key</button>
+          <div id="ck-result" style="font-size:13px;min-height:16px;"></div>
+        </div>
+      </div>
+
+      <!-- LOGS TAB -->
+      <div id="tab-logs" class="admin-tab">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <h2>📋 Request Logs</h2>
+          <button class="btn btn-ghost btn-sm" onclick="loadLogs()">🔄 Refresh</button>
+        </div>
+        <div class="tbl-wrap glass" style="padding:0;">
+          <table>
+            <thead>
+              <tr><th>Time</th><th>Key</th><th>Platform</th><th>Type</th><th>Status</th><th>URL</th></tr>
+            </thead>
+            <tbody id="logs-tbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px;">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /.admin-content -->
+  </div><!-- /.admin-body -->
+</div><!-- /#admin-panel -->
+
+<script>
+// ── Admin Auth ───────────────────────────────
+const ADMIN_KEY = sessionStorage.getItem('adminKey') || '';
+
+window.addEventListener('hashchange', checkHash);
+window.addEventListener('load', () => { checkHash(); loadStats(); loadLibrary(); });
+
+function checkHash() {
+  if (window.location.hash === '#shaun') {
+    if (sessionStorage.getItem('adminAuth') === '2810') {
+      openAdminPanel();
+    } else {
+      document.getElementById('admin-overlay').classList.remove('hidden');
+    }
+  }
+}
+
+function verifyAdmin() {
+  const pass = document.getElementById('admin-pass').value;
+  if (pass === '2810') {
+    sessionStorage.setItem('adminAuth', '2810');
+    document.getElementById('admin-overlay').classList.add('hidden');
+    document.getElementById('admin-pass').value = '';
+    openAdminPanel();
+  } else {
+    document.getElementById('admin-err').textContent = '✖ Incorrect password';
+    setTimeout(() => document.getElementById('admin-err').textContent='', 2000);
+  }
+}
+
+function openAdminPanel() {
+  document.getElementById('main-site').classList.add('hidden');
+  document.getElementById('admin-panel').classList.remove('hidden');
+  loadAdminStats();
+  loadKeys();
+  loadLogs();
+}
+
+function closeAdmin() {
+  document.getElementById('admin-overlay').classList.add('hidden');
+  document.getElementById('admin-panel').classList.add('hidden');
+  document.getElementById('main-site').classList.remove('hidden');
+  history.pushState('', document.title, window.location.pathname);
+}
+
+// ── Admin Tabs ───────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Admin API calls ──────────────────────────
+const AK = () => sessionStorage.getItem('adminAuth') || '2810';
+const adminFetch = (path, opts={}) =>
+  fetch(path, { headers: {'X-Admin-Key': AK(), 'Content-Type':'application/json'}, ...opts });
+
+async function loadAdminStats() {
+  try {
+    const r = await adminFetch('/admin/stats');
+    const d = await r.json();
+    document.getElementById('a-total-keys').textContent = d.total_keys ?? '—';
+    document.getElementById('a-active-keys').textContent = d.active_keys ?? '—';
+    document.getElementById('a-total-req').textContent = d.total_requests ?? '—';
+    document.getElementById('a-today-req').textContent = d.today_requests ?? '—';
+    document.getElementById('a-success').textContent = d.success_requests ?? '—';
+    document.getElementById('a-errors').textContent = d.error_requests ?? '—';
+  } catch(e) { console.error(e); }
+}
+
+async function loadKeys() {
+  try {
+    const r = await adminFetch('/admin/keys');
+    const d = await r.json();
+    const tbody = document.getElementById('keys-tbody');
+    if (!d.keys || d.keys.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px;">No keys yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = d.keys.map(k => `
+      <tr>
+        <td class="mono" style="font-size:12px;color:var(--cyan);">${k.key.slice(0,14)}…</td>
+        <td><strong>${k.name}</strong><br/><span style="font-size:12px;color:var(--muted);">${k.email}</span></td>
+        <td><span class="badge badge-${k.plan}">${k.plan}</span></td>
+        <td>${k.daily_requests} / ${k.max_requests}</td>
+        <td><span class="badge badge-${k.is_active?'active':'inactive'}">${k.is_active?'Active':'Revoked'}</span></td>
+        <td style="font-size:12px;color:var(--muted);">${k.created_at ? k.created_at.slice(0,10) : '—'}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${k.is_active ? `<button class="btn btn-xs btn-danger" onclick="revokeKey('${k.key}')">Revoke</button>` : ''}
+          <button class="btn btn-xs btn-ghost" onclick="deleteKey('${k.key}')">Delete</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function revokeKey(key) {
+  if (!confirm('Revoke this key?')) return;
+  await adminFetch(`/admin/keys/${key}/revoke`, {method:'DELETE'});
+  loadKeys();
+}
+async function deleteKey(key) {
+  if (!confirm('Permanently delete this key?')) return;
+  await adminFetch(`/admin/keys/${key}`, {method:'DELETE'});
+  loadKeys();
+}
+
+async function adminCreateKey() {
+  const name = document.getElementById('ck-name').value.trim();
+  const email = document.getElementById('ck-email').value.trim();
+  const plan = document.getElementById('ck-plan').value;
+  const limit = document.getElementById('ck-limit').value;
+  const note = document.getElementById('ck-note').value.trim();
+  if (!name || !email) { document.getElementById('ck-result').innerHTML='<span style="color:var(--red);">Name and email required</span>'; return; }
+  const body = { name, email, plan, note };
+  if (limit) body.max_requests = parseInt(limit);
+  const r = await adminFetch('/admin/keys', {method:'POST', body: JSON.stringify(body)});
+  const d = await r.json();
+  if (d.key) {
+    document.getElementById('ck-result').innerHTML = `<span style="color:var(--green);">✅ Created: </span><code class="mono" style="color:var(--cyan);word-break:break-all;">${d.key.key}</code>`;
+    loadKeys();
+  } else {
+    document.getElementById('ck-result').innerHTML = `<span style="color:var(--red);">Error: ${JSON.stringify(d)}</span>`;
+  }
+}
+
+async function loadLogs() {
+  try {
+    const r = await adminFetch('/admin/logs?limit=100');
+    const d = await r.json();
+    const tbody = document.getElementById('logs-tbody');
+    if (!d.logs || d.logs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px;">No logs yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = d.logs.map(l => `
+      <tr>
+        <td style="font-size:12px;color:var(--muted);">${l.timestamp ? l.timestamp.slice(0,19).replace('T',' ') : '—'}</td>
+        <td class="mono" style="font-size:12px;color:var(--muted);">${l.api_key}</td>
+        <td>${l.platform || '—'}</td>
+        <td><span class="badge badge-free">${l.media_type || '—'}</span></td>
+        <td><span class="badge badge-${l.status==='success'?'success':'error'}">${l.status}</span></td>
+        <td style="font-size:12px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;">${l.url || '—'}</td>
+      </tr>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+// ── Public Stats ─────────────────────────────
+async function loadStats() {
+  try {
+    const r = await fetch('/health');
+    const d = await r.json();
+    document.getElementById('stat-keys').textContent = d.total_keys ?? '—';
+    document.getElementById('stat-req').textContent = d.total_requests ?? '—';
+    document.getElementById('stat-today').textContent = d.today_requests ?? '—';
+  } catch(e) {}
+}
+
+// ── Public Key Creation ──────────────────────
+async function createKey() {
+  const name = document.getElementById('kf-name').value.trim();
+  const email = document.getElementById('kf-email').value.trim();
+  const err = document.getElementById('kf-err');
+  if (!name || !email) { err.textContent = 'Please fill in name and email.'; return; }
+  err.textContent = '';
+  try {
+    const r = await fetch('/api/keys/create', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email})});
+    const d = await r.json();
+    if (d.success) {
+      document.getElementById('kf-key-val').textContent = d.data.key;
+      document.getElementById('kf-result').style.display = 'block';
+      loadStats();
+    } else {
+      err.textContent = d.detail || 'Error creating key.';
+    }
+  } catch(e) { err.textContent = 'Server error. Try again.'; }
+}
+
+function copyKey() {
+  const k = document.getElementById('kf-key-val').textContent;
+  navigator.clipboard.writeText(k).then(() => alert('Key copied!'));
+}
+
+// ── Code Examples ────────────────────────────
+const EXAMPLES = {
+  info: `GET https://your-api.onrender.com/api/info?url=https://youtu.be/dQw4w9WgXcQ\nX-API-Key: mapi_your_key_here`,
+  video: `GET https://your-api.onrender.com/api/video?url=https://youtu.be/dQw4w9WgXcQ&quality=1080p\nX-API-Key: mapi_your_key_here`,
+  audio: `GET https://your-api.onrender.com/api/audio?url=https://youtu.be/dQw4w9WgXcQ&format=mp3\nX-API-Key: mapi_your_key_here`,
+  thumb: `GET https://your-api.onrender.com/api/thumbnail?url=https://www.instagram.com/reel/XXXXX/\nX-API-Key: mapi_your_key_here`,
+  playlist: `GET https://your-api.onrender.com/api/playlist?url=https://youtube.com/playlist?list=PLxx&max_items=20\nX-API-Key: mapi_your_key_here`,
+};
+function showEx(type) {
+  document.getElementById('ex-code').textContent = EXAMPLES[type];
+  document.querySelectorAll('.btn-primary,.btn-ghost').forEach(b => {
+    if (b.getAttribute('onclick') === `showEx('${type}')`) b.className='btn btn-sm btn-primary';
+    else if (b.getAttribute('onclick')?.startsWith("showEx")) b.className='btn btn-sm btn-ghost';
+  });
+}
+function copyCode(btn) {
+  navigator.clipboard.writeText(document.getElementById('ex-code').textContent);
+  btn.textContent = 'Copied!';
+  setTimeout(()=>btn.textContent='Copy',2000);
+}
+
+// ── Library ──────────────────────────────────
+async function loadLibrary() {
+  const grid = document.getElementById('lib-grid');
+  // Note: browse_library requires a key. We'll try to use one from localStorage or just show a message.
+  const key = localStorage.getItem('mapi_key') || 'mapi_public_preview'; 
+  try {
+    const r = await fetch('/api/library?limit=12', { headers: { 'X-API-Key': key } });
+    const d = await r.json();
+    if (!d.success || !d.data.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);">Library is empty. Process some URLs to see them here!</div>';
+      return;
+    }
+    grid.innerHTML = d.data.map(m => `
+      <div class="glass fadein" style="overflow:hidden;border-radius:14px;display:flex;flex-direction:column;">
+        <div style="aspect-ratio:16/9;background:url(\'${m.thumbnail || ''}\') center/cover;position:relative;">
+          <div style="position:absolute;top:10px;right:10px;" class="badge badge-pro">${m.platform}</div>
+          <div style="position:absolute;bottom:10px;left:10px;" class="badge badge-free">${m.media_type} ${m.quality}</div>
+        </div>
+        <div style="padding:16px;flex:1;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-weight:700;font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;">${m.title}</div>
+          <div style="margin-top:auto;display:flex;gap:6px;">
+            <a href="${m.direct_url}" target="_blank" class="btn btn-xs btn-primary" style="flex:1;justify-content:center;">Direct Link</a>
+            <a href="${m.url}" target="_blank" class="btn btn-xs btn-ghost">Source</a>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--red);">Connect an API key to browse the library.</div>';
+  }
+}
+
+// Save key to local storage when created
+const originalCreateKey = createKey;
+createKey = async function() {
+  await originalCreateKey();
+  const k = document.getElementById('kf-key-val').textContent;
+  if (k) {
+    localStorage.setItem('mapi_key', k);
+    loadLibrary();
+  }
+};
+</script>
+</body>
+</html>

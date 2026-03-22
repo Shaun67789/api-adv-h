@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: mediaapi
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ADMIN_SECRET
+        value: "2810"
+      - key: MAX_FREE_REQUESTS
+        value: "100"
+      - key: DATABASE_URL
+        value: "sqlite:///./mediaapi.db"
+    # To persist the database on Render Free, you MUST use an external DB URL.
+    # Otherwise, keys will reset on redeploy.

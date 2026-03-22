@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard — MediaAPI</title>
+<link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+<div class="glow-bg"></div>
+<nav>
+  <div class="nav-logo">⚡ MediaAPI</div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/dashboard" class="nav-link" style="color:var(--cyan);">Dashboard</a>
+    <a href="/docs" class="nav-link">Docs</a>
+  </div>
+</nav>
+
+<div style="max-width:800px;margin:0 auto;padding:120px 24px 60px;">
+  <h1 style="font-size:32px;font-weight:800;margin-bottom:8px;">API Key Dashboard</h1>
+  <p style="color:var(--muted);margin-bottom:40px;">Enter your API key to view usage stats and request history.</p>
+
+  <!-- Key Input -->
+  <div class="glass" style="padding:28px;border-radius:16px;margin-bottom:24px;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <input id="dash-key" class="form-input" type="text" placeholder="mapi_your_key_here" style="flex:1;min-width:200px;"/>
+      <button class="btn btn-primary" onclick="loadDash()">View Stats</button>
+    </div>
+    <div id="dash-err" style="color:var(--red);font-size:13px;margin-top:10px;"></div>
+  </div>
+
+  <!-- Stats (hidden until key entered) -->
+  <div id="dash-results" class="hidden">
+    <!-- Profile Card -->
+    <div class="glass glass-glow" style="padding:28px;margin-bottom:20px;border-radius:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+        <div>
+          <div style="font-size:20px;font-weight:800;" id="d-name">—</div>
+          <div style="font-size:13px;color:var(--muted);" id="d-email">—</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span id="d-plan-badge" class="badge badge-free">free</span>
+          <span id="d-status-badge" class="badge badge-active">Active</span>
+        </div>
+      </div>
+      <!-- Usage bar -->
+      <div style="margin-bottom:10px;display:flex;justify-content:space-between;">
+        <span style="font-size:13px;font-weight:600;">Daily Usage</span>
+        <span style="font-size:13px;color:var(--muted);"><span id="d-used">0</span> / <span id="d-limit">100</span> requests</span>
+      </div>
+      <div class="progress-wrap" style="margin-bottom:20px;">
+        <div class="progress-bar" id="d-bar" style="width:0%"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
+        <div style="text-align:center;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;">
+          <div style="font-size:24px;font-weight:800;color:var(--cyan);" id="d-total">—</div>
+          <div style="font-size:12px;color:var(--muted);">All-Time Requests</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;">
+          <div style="font-size:24px;font-weight:800;color:var(--green);" id="d-remaining">—</div>
+          <div style="font-size:12px;color:var(--muted);">Remaining Today</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Preview -->
+    <div class="glass" style="padding:20px;margin-bottom:20px;border-radius:14px;">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Your API Key</div>
+      <div class="key-display">
+        <code id="d-key-preview" style="flex:1;font-family:var(--mono);font-size:13px;color:var(--cyan);"></code>
+        <button class="btn btn-xs btn-ghost" onclick="copyDashKey()">Copy</button>
+      </div>
+    </div>
+
+    <!-- Recent Logs -->
+    <div class="glass" style="padding:0;border-radius:14px;overflow:hidden;">
+      <div style="padding:18px 20px;border-bottom:1px solid var(--border);font-weight:700;">📋 Recent Requests</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Time</th><th>Platform</th><th>Type</th><th>Status</th></tr></thead>
+          <tbody id="d-logs"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px;">No requests yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let dashKey = '';
+
+async function loadDash() {
+  dashKey = document.getElementById('dash-key').value.trim();
+  const err = document.getElementById('dash-err');
+  if (!dashKey) { err.textContent = 'Please enter your API key.'; return; }
+  err.textContent = '';
+  try {
+    const r = await fetch('/api/usage', { headers: { 'X-API-Key': dashKey } });
+    const d = await r.json();
+    if (!r.ok) { err.textContent = d.detail || 'Invalid key.'; return; }
+    const u = d.data;
+    document.getElementById('d-name').textContent = u.name;
+    document.getElementById('d-email').textContent = u.email;
+    const planBadge = document.getElementById('d-plan-badge');
+    planBadge.textContent = u.plan;
+    planBadge.className = `badge badge-${u.plan}`;
+    const statusBadge = document.getElementById('d-status-badge');
+    statusBadge.textContent = u.is_active ? 'Active' : 'Revoked';
+    statusBadge.className = `badge badge-${u.is_active ? 'active' : 'inactive'}`;
+    document.getElementById('d-used').textContent = u.daily_used;
+    document.getElementById('d-limit').textContent = u.daily_limit;
+    document.getElementById('d-total').textContent = u.total_used;
+    document.getElementById('d-remaining').textContent = u.remaining_today;
+    document.getElementById('d-key-preview').textContent = u.key_preview;
+    const pct = u.daily_limit > 0 ? Math.min(100, Math.round(u.daily_used / u.daily_limit * 100)) : 0;
+    document.getElementById('d-bar').style.width = pct + '%';
+    document.getElementById('dash-results').classList.remove('hidden');
+    loadMyLogs();
+  } catch(e) { err.textContent = 'Connection error.'; }
+}
+
+async function loadMyLogs() {
+  try {
+    const r = await fetch('/api/logs/my?limit=20', { headers: { 'X-API-Key': dashKey } });
+    const d = await r.json();
+    const tbody = document.getElementById('d-logs');
+    if (!d.data || d.data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px;">No requests yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = d.data.map(l => `
+      <tr>
+        <td style="font-size:12px;color:var(--muted);">${l.timestamp ? l.timestamp.slice(0,19).replace('T',' ') : '—'}</td>
+        <td>${l.platform || '—'}</td>
+        <td><span class="badge badge-free">${l.media_type || '—'}</span></td>
+        <td><span class="badge badge-${l.status==='success'?'success':'error'}">${l.status}</span></td>
+      </tr>`).join('');
+  } catch(e) {}
+}
+
+function copyDashKey() {
+  const k = document.getElementById('dash-key').value.trim();
+  navigator.clipboard.writeText(k).then(() => alert('Key copied!'));
+}
+
+// Auto-load from URL param
+const urlParams = new URLSearchParams(window.location.search);
+const keyParam = urlParams.get('key');
+if (keyParam) { document.getElementById('dash-key').value = keyParam; loadDash(); }
+</script>
+</body>
+</html>
